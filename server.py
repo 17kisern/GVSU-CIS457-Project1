@@ -1,28 +1,80 @@
+import os
 import socket                   # Import socket module
+import asyncio
 
 port = 60000                    # Reserve a port for your service.
-s = socket.socket()             # Create a socket object
-host = socket.gethostname()     # Get local machine name
-s.bind((host, port))            # Bind to the port
-s.listen(5)                     # Now wait for client connection.
+numConnections = 5
+bufferSize = 1024
 
-print('Server listening....')
 
-while True:
-    connectionSocket, connectionAddress = s.accept()     # Establish connection with client.
-    print("Received Connection from: ", connectionAddress)
-    data = connectionSocket.recv(1024)
-    print("Server received", repr(data))
+def Main():
+    # Create a socket object
+    openSocket = socket.socket()
 
-    fileName = "OriginalFile.txt"
-    fileItself = open(fileName, "rb")
-    fileInBytes = fileItself.read(1024)
-    while fileInBytes:
-        connectionSocket.send(fileInBytes)
-        print("Sent: ", repr(fileInBytes))
-        fileInBytes = fileItself.read(1024)
-    fileItself.close()
+    # Get local machine name
+    host = socket.gethostname()
 
-    print("Done sending")
-    connectionSocket.send(b"Thank you for connecting")
-    connectionSocket.close()
+    # Bind to the port
+    openSocket.bind((host, port))
+
+    # Configure to allow 5 connections
+    openSocket.listen(numConnections)
+
+    print('Server listening....')
+
+    # Wait for new connections
+    while True:
+        # Start listening for an individual connection
+        # [connectionSocket, connectionAddress]
+        tupleboi = openSocket.accept()
+
+        # Spin off a thread to handle this connection
+        asyncio.run(ManageConnection(tupleboi))
+
+
+async def ManageConnection(connection):
+    connectionAddress = connection[1]
+    connectionSocket = connection[0]
+
+    # Create a header to be sent first
+    header: bytes = 0
+
+    while True:
+        print("[", connectionAddress, "] Received Connection")
+        data = connectionSocket.recv(1024)
+        print("[", connectionAddress, "] Received data: ", data.decode("utf-8"))
+
+        fileName = "OriginalFile.txt"
+        fileSize = os.path.getsize(fileName)
+        print("FileSize: ", fileSize)
+        downloadRemaining = fileSize
+        fileItself = open(fileName, "rb")
+
+        # Breaking the file down into smaller data chunks
+        fileInBytes: bytes = 0
+        if(fileSize < bufferSize):
+            fileInBytes = fileItself.read(fileSize)
+        else:
+            fileInBytes = fileItself.read(bufferSize)
+
+        while fileInBytes:
+            connectionSocket.send(fileInBytes)
+            print("[", connectionAddress, "] Sent: ", fileInBytes.decode("utf-8"))
+
+            if(downloadRemaining < bufferSize):
+                fileInBytes = fileItself.read(downloadRemaining)
+            else:
+                fileInBytes = fileItself.read(bufferSize)
+
+        # Let the client know we're done sending the file
+        connectionSocket.send(b'\0')
+        fileItself.close()
+
+        print("[", connectionAddress, "] Ending Connection")
+
+        connectionSocket.send(b"Thank you for connecting")
+        connectionSocket.close()
+        break
+
+Main()
+print("After Main")
