@@ -1,5 +1,18 @@
 import socket                               # Import socket module
 
+"""
+
+Notes
+==============
+
+socket.gethostname() gets the current machines hostname, for example "DESKTOP-1337PBJ"
+
+bytes.decode("utf-8") decodes some 'bytes' object using the utf-8 standard that information gets sent over the internet in
+
+all the b'string here' are converting a string into binary format. Hence the B
+
+"""
+
 socketObject = socket.socket()              # Create a socket object
 host = socket.gethostname()                 # Get local machine name
 port = 60000                                # Reserve a port for your service.

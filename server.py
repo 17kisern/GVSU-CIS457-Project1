@@ -6,6 +6,21 @@ port = 60000                    # Reserve a port for your service.
 numConnections = 5
 bufferSize = 1024
 
+"""
+
+Notes
+==============
+
+socket.gethostname() gets the current machines hostname, for example "DESKTOP-1337PBJ"
+
+bytes.decode("utf-8") decodes some 'bytes' object using the utf-8 standard that information gets sent over the internet in
+
+all the b'string here' are converting a string into binary format. Hence the B
+
+asyncio is just a library that allows us to run parallel operations without stressing about all the bullshit that comes with multithreading. It allows us to run multiple connections simultaneously
+
+"""
+
 
 def Main():
     # Create a socket object
@@ -45,26 +60,16 @@ async def ManageConnection(connection):
         print("[", connectionAddress, "] Received data: ", data.decode("utf-8"))
 
         fileName = "OriginalFile.txt"
-        fileSize = os.path.getsize(fileName)
-        print("FileSize: ", fileSize)
-        downloadRemaining = fileSize
         fileItself = open(fileName, "rb")
 
         # Breaking the file down into smaller data chunks
-        fileInBytes: bytes = 0
-        if(fileSize < bufferSize):
-            fileInBytes = fileItself.read(fileSize)
-        else:
-            fileInBytes = fileItself.read(bufferSize)
+        fileInBytes = fileItself.read(bufferSize)
 
         while fileInBytes:
             connectionSocket.send(fileInBytes)
             print("[", connectionAddress, "] Sent: ", fileInBytes.decode("utf-8"))
 
-            if(downloadRemaining < bufferSize):
-                fileInBytes = fileItself.read(downloadRemaining)
-            else:
-                fileInBytes = fileItself.read(bufferSize)
+            fileInBytes = fileItself.read(bufferSize)
 
         # Let the client know we're done sending the file
         connectionSocket.send(b'\0')
