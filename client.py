@@ -16,6 +16,7 @@ all the b'string here' are converting a string into binary format. Hence the B
 socketObject = socket.socket()              # Create a socket object
 host = socket.gethostname()                 # Get local machine name
 port = 60000                                # Reserve a port for your service.
+bufferSize = 1024
 
 socketObject.connect((host, port))
 socketObject.send(b"Hello Server!")
@@ -27,7 +28,7 @@ with open('ReceivedFile.txt', 'wb') as receivedFile:
         print('Receiving data from server...')
 
         # Receiving data in 1 KB chunks
-        data = socketObject.recv(1024)
+        data = socketObject.recv(bufferSize)
 
         # If there was no data in the latest chunk, then break out of our loop
         decodedString = data.decode("utf-8")

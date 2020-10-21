@@ -51,9 +51,6 @@ async def ManageConnection(connection):
     connectionAddress = connection[1]
     connectionSocket = connection[0]
 
-    # Create a header to be sent first
-    header: bytes = 0
-
     while True:
         print("[", connectionAddress, "] Received Connection")
         data = connectionSocket.recv(1024)
