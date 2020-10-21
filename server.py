@@ -6,23 +6,23 @@ host = socket.gethostname()     # Get local machine name
 s.bind((host, port))            # Bind to the port
 s.listen(5)                     # Now wait for client connection.
 
-print ('Server listening....')
+print('Server listening....')
 
 while True:
-    conn, addr = s.accept()     # Establish connection with client.
-    print ('Got connection from', addr)
-    data = conn.recv(1024)
-    print('Server received', repr(data))
+    connectionSocket, connectionAddress = s.accept()     # Establish connection with client.
+    print("Received Connection from: ", connectionAddress)
+    data = connectionSocket.recv(1024)
+    print("Server received", repr(data))
 
-    filename='OriginalFile.txt'
-    f = open(filename,'rb')
-    l = f.read(1024)
-    while (l):
-       conn.send(l)
-       print('Sent ',repr(l))
-       l = f.read(1024)
-    f.close()
+    fileName = "OriginalFile.txt"
+    fileItself = open(fileName, "rb")
+    fileInBytes = fileItself.read(1024)
+    while fileInBytes:
+        connectionSocket.send(fileInBytes)
+        print("Sent: ", repr(fileInBytes))
+        fileInBytes = fileItself.read(1024)
+    fileItself.close()
 
-    print('Done sending')
-    conn.send(b'Thank you for connecting')
-    conn.close()
+    print("Done sending")
+    connectionSocket.send(b"Thank you for connecting")
+    connectionSocket.close()
