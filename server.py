@@ -13,6 +13,7 @@ Notes
 
 socket.gethostname() gets the current machines hostname, for example "DESKTOP-1337PBJ"
 
+string.encode('UTF-8') encodes the given string into a 'bytes' literal object using the utf-8 standard that is required
 bytes.decode("utf-8") decodes some 'bytes' object using the utf-8 standard that information gets sent over the internet in
 
 all the b'string here' are converting a string into binary format. Hence the B
