@@ -19,31 +19,50 @@ host = socket.gethostname()                 # Get local machine name
 port = 60000                                # Reserve a port for your service.
 bufferSize = 1024
 
-socketObject.connect((host, port))
+def Connect():
+    socketObject.connect((host, port))
 
-userInput = input("Enter Command: ")
-socketObject.send(userInput.encode('UTF-8'))
+def List():
+    return
 
-with open('ReceivedFile.txt', 'wb') as receivedFile:
-    print("Successfully opened/created 'ReceivedFile.txt'")
+def Retrieve():
+    return
 
-    while True:
-        print('Receiving data from server...')
+def Store():
+    return
 
-        # Receiving data in 1 KB chunks
-        data = socketObject.recv(bufferSize)
+def Quit():
+    return
 
-        # If there was no data in the latest chunk, then break out of our loop
-        decodedString = data.decode("utf-8")
-        if(decodedString == "\0" or not data):
-            break
+def Main():
+    print("You must first connect to a server before issuing any commands.")
+    socketObject.connect((host, port))
 
-        print("Data Received: ", data.decode("utf-8"))
+    userInput = input("Enter Command: ")
+    socketObject.send(userInput.encode('UTF-8'))
 
-        # Write data to a file
-        receivedFile.write(data)
+    with open('ReceivedFile.txt', 'wb') as receivedFile:
+        print("Successfully opened/created 'ReceivedFile.txt'")
 
-receivedFile.close()
-print("Successfully received and saved file")
-socketObject.close()
-print("Connection with Server Closed")
+        while True:
+            print('Receiving data from server...')
+
+            # Receiving data in 1 KB chunks
+            data = socketObject.recv(bufferSize)
+
+            # If there was no data in the latest chunk, then break out of our loop
+            decodedString = data.decode("utf-8")
+            if(decodedString == "\0" or not data):
+                break
+
+            print("Data Received: ", data.decode("utf-8"))
+
+            # Write data to a file
+            receivedFile.write(data)
+
+    receivedFile.close()
+    print("Successfully received and saved file")
+    socketObject.close()
+    print("Connection with Server Closed")
+
+Main()
