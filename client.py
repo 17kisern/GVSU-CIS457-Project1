@@ -36,9 +36,30 @@ def Quit():
 
 def Main():
     print("You must first connect to a server before issuing any commands.")
-    socketObject.connect((host, port))
+    # socketObject.connect((host, port))
 
     userInput = input("Enter Command: ")
+    commandArgs = userInput.split()
+    commandGiven = commandArgs[0]
+
+    if(commandGiven == "CONNECT"):
+        print("User ran COMMAND")
+        return
+    elif(commandGiven == "LIST"):
+        print("User ran LIST")
+        return
+    elif(commandGiven == "RETRIEVE"):
+        print("User ran RETRIEVE")
+        return
+    elif(commandGiven == "STORE"):
+        print("User ran STORE")
+        return
+    elif(commandGiven == "QUIT"):
+        print("User ran QUIT")
+        return
+
+
+
     socketObject.send(userInput.encode('UTF-8'))
 
     with open('ReceivedFile.txt', 'wb') as receivedFile:
