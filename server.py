@@ -3,7 +3,7 @@ import socket                   # Import socket module
 import asyncio
 
 port = 60000                    # Reserve a port for your service.
-numConnections = 5
+maxConnections = 5
 bufferSize = 1024
 
 """
@@ -34,17 +34,15 @@ def Main():
     openSocket.bind((host, port))
 
     # Configure to allow 5 connections
-    openSocket.listen(numConnections)
-
-    print('Server listening....')
+    openSocket.listen(maxConnections)
 
     # Wait for new connections
     while True:
-        # Start listening for an individual connection
+        # print("Number of Connections: ", numConnections)
         # [connectionSocket, connectionAddress]
+        print("Awaiting Connection")
         tupleboi = openSocket.accept()
 
-        # Spin off a thread to handle this connection
         asyncio.run(ManageConnection(tupleboi))
 
 
@@ -55,7 +53,7 @@ async def ManageConnection(connection):
     while True:
         print("[", connectionAddress, "] Received Connection")
         data = connectionSocket.recv(1024)
-        print("[", connectionAddress, "] Received data: ", data.decode("utf-8"))
+        print("[", connectionAddress, "] Received Command: ", data.decode("utf-8"))
 
         fileName = "OriginalFile.txt"
         fileItself = open(fileName, "rb")
@@ -75,7 +73,8 @@ async def ManageConnection(connection):
 
         print("[", connectionAddress, "] Ending Connection")
 
-        connectionSocket.send(b"Thank you for connecting")
+        # # For every send from one device, we need to have another device listening otherwise the program will hang
+        # connectionSocket.send(b"Thank you for connecting")
         connectionSocket.close()
         break
 
