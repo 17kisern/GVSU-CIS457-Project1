@@ -28,7 +28,8 @@ def Main():
     openSocket = socket.socket()
 
     # Get local machine name
-    host = socket.gethostname()
+    # host = socket.gethostname()
+    host = "localhost"
 
     # Bind to the port
     openSocket.bind((host, port))
