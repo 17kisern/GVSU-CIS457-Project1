@@ -44,18 +44,23 @@ def Main():
 
     if(commandGiven.upper() == "CONNECT"):
         print("User ran COMMAND")
+        Connect()
         return
     elif(commandGiven.upper() == "LIST"):
         print("User ran LIST")
+        List()
         return
     elif(commandGiven.upper() == "RETRIEVE"):
         print("User ran RETRIEVE")
+        Retrieve()
         return
     elif(commandGiven.upper() == "STORE"):
         print("User ran STORE")
+        Store()
         return
     elif(commandGiven.upper() == "QUIT"):
         print("User ran QUIT")
+        Quit()
         return
     else:
         print("Invalid Command. Please try again.")
