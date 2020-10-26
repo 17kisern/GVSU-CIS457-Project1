@@ -16,13 +16,14 @@ all the b'string here' are converting a string into binary format. Hence the B
 
 connected = False
 socketObject = socket.socket()              # Create a socket object
-host = socket.gethostname()                 # Get local machine name
+# host = socket.gethostname()
+# host = "localhost"                          # Get local machine name
 # port = 60000                                # Reserve a port for your service.
 bufferSize = 1024
 
 def Connect(address, port: int):
     try:
-        socketObject.connect((host, int(port)))
+        socketObject.connect((address, int(port)))
         print("Successfully connected")
         connected = True
     except:
