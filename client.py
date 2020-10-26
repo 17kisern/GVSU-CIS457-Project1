@@ -42,22 +42,24 @@ def Main():
     commandArgs = userInput.split()
     commandGiven = commandArgs[0]
 
-    if(commandGiven == "CONNECT"):
+    if(commandGiven.upper() == "CONNECT"):
         print("User ran COMMAND")
         return
-    elif(commandGiven == "LIST"):
+    elif(commandGiven.upper() == "LIST"):
         print("User ran LIST")
         return
-    elif(commandGiven == "RETRIEVE"):
+    elif(commandGiven.upper() == "RETRIEVE"):
         print("User ran RETRIEVE")
         return
-    elif(commandGiven == "STORE"):
+    elif(commandGiven.upper() == "STORE"):
         print("User ran STORE")
         return
-    elif(commandGiven == "QUIT"):
+    elif(commandGiven.upper() == "QUIT"):
         print("User ran QUIT")
         return
-
+    else:
+        print("Invalid Command. Please try again.")
+        return
 
 
     socketObject.send(userInput.encode('UTF-8'))
