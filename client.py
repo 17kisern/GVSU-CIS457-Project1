@@ -22,18 +22,37 @@ socketObject = socket.socket()              # Create a socket object
 bufferSize = 1024
 
 def Connect(address, port: int):
+    global connected
+    global socketObject
     try:
         socketObject.connect((address, int(port)))
-        print("Successfully connected")
+        print("\nSuccessfully connected to\nAddress: ", address, "\tPort: ", int(port))
         connected = True
     except:
-        print("Failed to connect! Please try again")
+        print("\nFailed to connect to\nAddress: ", address, "\tPort: ", int(port), "\nPlease Try Again")
+        socketObject = socket.socket()
         connected = False
 
 def Disconnect(commandArgs):
+    global connected
+    global socketObject
+    try:
+        command = " "
+        socketObject.send(command.join(commandArgs).encode("UTF-8"))
+
+        socketObject.close()
+        socketObject = socket.socket()
+        print("Successfully disconnected")
+        connected = False
+    except:
+        print("Failed to disconnect! Please try again")
     return
 
 def List(commandArgs):
+    global socketObject
+    
+    command = " "
+    socketObject.send(command.join(commandArgs).encode("UTF-8"))
     return
 
 def Retrieve(commandArgs):
@@ -43,13 +62,23 @@ def Store(commandArgs):
     return
 
 def Quit(commandArgs):
+    global socketObject
+    
+    Disconnect(commandArgs)
+    return
+
+def Shutdown_Server(commandArgs):
+    global socketObject
+
+    command = " "
+    socketObject.send(command.join(commandArgs).encode("UTF-8"))
     return
 
 def Main():
     print("You must first connect to a server before issuing any commands.")
 
     while True:
-        userInput = input("Enter Command: ")
+        userInput = input("\nEnter Command: ")
         commandArgs = userInput.split()
         commandGiven = commandArgs[0]
 
@@ -65,7 +94,7 @@ def Main():
                 print("You must first connect to a server before issuing any commands.")
                 continue
 
-        if(commandGiven.upper() == "LIST"):
+        if(commandGiven.upper() == "LIST" and len(commandArgs) == 1):
             print("User ran LIST")
             List(commandArgs)
             continue
@@ -77,10 +106,18 @@ def Main():
             print("User ran STORE")
             Store(commandArgs)
             continue
+        elif(commandGiven.upper() == "DISCONNECT"):
+            print("User ran DISCONNECT")
+            Disconnect(commandArgs)
+            continue
         elif(commandGiven.upper() == "QUIT"):
             print("User ran QUIT")
             Quit(commandArgs)
-            continue
+            break
+        elif(commandGiven.upper() == "SHUTDOWN_SERVER"):
+            print("User ran SHUTDOWN_SERVER")
+            Quit(commandArgs)
+            break
         else:
             print("Invalid Command. Please try again.")
             continue
@@ -113,3 +150,4 @@ def Main():
         # print("Connection with Server Closed")
 
 Main()
+print("Program Closing")
