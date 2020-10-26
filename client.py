@@ -14,83 +14,102 @@ all the b'string here' are converting a string into binary format. Hence the B
 
 """
 
+connected = False
 socketObject = socket.socket()              # Create a socket object
 host = socket.gethostname()                 # Get local machine name
 port = 60000                                # Reserve a port for your service.
 bufferSize = 1024
 
-def Connect():
-    socketObject.connect((host, port))
+def Connect(commandArgs):
+    try:
+        socketObject.connect((host, port))
+        print("Successfully connected")
+        connected = True
+    except:
+        print("Failed to connect! Please try again")
+        connected = False
 
-def List():
+def Disconnect(commandArgs):
     return
 
-def Retrieve():
+def List(commandArgs):
     return
 
-def Store():
+def Retrieve(commandArgs):
     return
 
-def Quit():
+def Store(commandArgs):
+    return
+
+def Quit(commandArgs):
     return
 
 def Main():
     print("You must first connect to a server before issuing any commands.")
     # socketObject.connect((host, port))
 
-    userInput = input("Enter Command: ")
-    commandArgs = userInput.split()
-    commandGiven = commandArgs[0]
+    while True:
+        userInput = input("Enter Command: ")
+        commandArgs = userInput.split()
+        commandGiven = commandArgs[0]
 
-    if(commandGiven.upper() == "CONNECT"):
-        print("User ran COMMAND")
-        Connect()
-        return
-    elif(commandGiven.upper() == "LIST"):
-        print("User ran LIST")
-        List()
-        return
-    elif(commandGiven.upper() == "RETRIEVE"):
-        print("User ran RETRIEVE")
-        Retrieve()
-        return
-    elif(commandGiven.upper() == "STORE"):
-        print("User ran STORE")
-        Store()
-        return
-    elif(commandGiven.upper() == "QUIT"):
-        print("User ran QUIT")
-        Quit()
-        return
-    else:
-        print("Invalid Command. Please try again.")
-        return
+        if(commandGiven.upper() == "CONNECT"):
+            if connected:
+                Disconnect(commandArgs)
+                Connect(commandArgs)
+            else:
+                Connect(commandArgs)
+            continue
+        else:
+            if not connected:
+                print("You must first connect to a server before issuing any commands.")
+                continue
+
+        if(commandGiven.upper() == "LIST"):
+            print("User ran LIST")
+            List(commandArgs)
+            continue
+        elif(commandGiven.upper() == "RETRIEVE"):
+            print("User ran RETRIEVE")
+            Retrieve(commandArgs)
+            continue
+        elif(commandGiven.upper() == "STORE"):
+            print("User ran STORE")
+            Store(commandArgs)
+            continue
+        elif(commandGiven.upper() == "QUIT"):
+            print("User ran QUIT")
+            Quit(commandArgs)
+            continue
+        else:
+            print("Invalid Command. Please try again.")
+            continue
 
 
-    socketObject.send(userInput.encode('UTF-8'))
+        socketObject.send(userInput.encode('UTF-8'))
 
-    with open('ReceivedFile.txt', 'wb') as receivedFile:
-        print("Successfully opened/created 'ReceivedFile.txt'")
+        with open('ReceivedFile.txt', 'wb') as receivedFile:
+            print("Successfully opened/created 'ReceivedFile.txt'")
 
-        while True:
-            print('Receiving data from server...')
+            while True:
+                print('Receiving data from server...')
 
-            # Receiving data in 1 KB chunks
-            data = socketObject.recv(bufferSize)
+                # Receiving data in 1 KB chunks
+                data = socketObject.recv(bufferSize)
 
-            # If there was no data in the latest chunk, then break out of our loop
-            decodedString = data.decode("utf-8")
-            if(decodedString == "\0" or not data):
-                break
+                # If there was no data in the latest chunk, then break out of our loop
+                decodedString = data.decode("utf-8")
+                if(decodedString == "\0" or not data):
+                    break
 
-            print("Data Received: ", data.decode("utf-8"))
+                print("Data Received: ", data.decode("utf-8"))
 
-            # Write data to a file
-            receivedFile.write(data)
+                # Write data to a file
+                receivedFile.write(data)
 
-    receivedFile.close()
-    print("Successfully received and saved file")
-    socketObject.close()
-    print("Connection with Server Closed")
+        receivedFile.close()
+        print("Successfully received and saved file")
+        socketObject.close()
+        print("Connection with Server Closed")
 
 Main()
