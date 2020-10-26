@@ -17,12 +17,12 @@ all the b'string here' are converting a string into binary format. Hence the B
 connected = False
 socketObject = socket.socket()              # Create a socket object
 host = socket.gethostname()                 # Get local machine name
-port = 60000                                # Reserve a port for your service.
+# port = 60000                                # Reserve a port for your service.
 bufferSize = 1024
 
-def Connect(commandArgs):
+def Connect(address, port: int):
     try:
-        socketObject.connect((host, port))
+        socketObject.connect((host, int(port)))
         print("Successfully connected")
         connected = True
     except:
@@ -46,19 +46,18 @@ def Quit(commandArgs):
 
 def Main():
     print("You must first connect to a server before issuing any commands.")
-    # socketObject.connect((host, port))
 
     while True:
         userInput = input("Enter Command: ")
         commandArgs = userInput.split()
         commandGiven = commandArgs[0]
 
-        if(commandGiven.upper() == "CONNECT"):
+        if(commandGiven.upper() == "CONNECT" and len(commandArgs) == 3):
             if connected:
                 Disconnect(commandArgs)
-                Connect(commandArgs)
+                Connect(commandArgs[1], commandArgs[2])
             else:
-                Connect(commandArgs)
+                Connect(commandArgs[1], commandArgs[2])
             continue
         else:
             if not connected:
@@ -86,30 +85,30 @@ def Main():
             continue
 
 
-        socketObject.send(userInput.encode('UTF-8'))
+        # socketObject.send(userInput.encode('UTF-8'))
 
-        with open('ReceivedFile.txt', 'wb') as receivedFile:
-            print("Successfully opened/created 'ReceivedFile.txt'")
+        # with open('ReceivedFile.txt', 'wb') as receivedFile:
+        #     print("Successfully opened/created 'ReceivedFile.txt'")
 
-            while True:
-                print('Receiving data from server...')
+        #     while True:
+        #         print('Receiving data from server...')
 
-                # Receiving data in 1 KB chunks
-                data = socketObject.recv(bufferSize)
+        #         # Receiving data in 1 KB chunks
+        #         data = socketObject.recv(bufferSize)
 
-                # If there was no data in the latest chunk, then break out of our loop
-                decodedString = data.decode("utf-8")
-                if(decodedString == "\0" or not data):
-                    break
+        #         # If there was no data in the latest chunk, then break out of our loop
+        #         decodedString = data.decode("utf-8")
+        #         if(decodedString == "\0" or not data):
+        #             break
 
-                print("Data Received: ", data.decode("utf-8"))
+        #         print("Data Received: ", data.decode("utf-8"))
 
-                # Write data to a file
-                receivedFile.write(data)
+        #         # Write data to a file
+        #         receivedFile.write(data)
 
-        receivedFile.close()
-        print("Successfully received and saved file")
-        socketObject.close()
-        print("Connection with Server Closed")
+        # receivedFile.close()
+        # print("Successfully received and saved file")
+        # socketObject.close()
+        # print("Connection with Server Closed")
 
 Main()
